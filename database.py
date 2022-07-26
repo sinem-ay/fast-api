@@ -6,5 +6,4 @@ engine = create_engine("postgresql://postgres:sin23a@localhost/item_db", echo=Tr
 
 Base = declarative_base()
 
-SessionLocal = sessionmaker(bind = engine)
-
+SessionLocal = sessionmaker(bind=engine)
