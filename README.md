@@ -5,3 +5,5 @@ First tutorial followed to understand how to create REST API with Fast API, sqla
 Also, Postman app used for sending requests:
 ![Example for request](SS-postman.png "Example for request")
 
+Test
+
