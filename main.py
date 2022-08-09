@@ -4,9 +4,11 @@ from typing import Optional, List
 from database import SessionLocal
 import models
 import time
+from loguru import logger
 
 app = FastAPI()
 
+logger.add("file_1.log",backtrace=True, diagnose=True, rotation="500 MB")
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -31,10 +33,13 @@ class Item(BaseModel):
 
 db = SessionLocal()
 
-
+@logger.catch
 @app.get('/items', response_model=List[Item], status_code=status.HTTP_200_OK)
 def get_all_items():
-    return db.query(models.Item).all()
+    try:
+        return db.query(models.Item).all()
+    except ZeroDivisionError:
+        logger.exception("Error")
 
 
 @app.get('/item/{item_id}', response_model=Item, status_code=status.HTTP_200_OK)
