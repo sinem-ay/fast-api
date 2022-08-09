@@ -8,6 +8,15 @@ import time
 app = FastAPI()
 
 
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+
 # Creating schema/model item class with pydantic
 class Item(BaseModel):
     id: int
@@ -23,25 +32,14 @@ class Item(BaseModel):
 db = SessionLocal()
 
 
-@app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    start_time = time.time()
-    response = await call_next(request)
-    process_time = time.time() - start_time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
-
-
-@app.get('/items', response_model=List[Item], status_code=200)
+@app.get('/items', response_model=List[Item], status_code=status.HTTP_200_OK)
 def get_all_items():
     return db.query(models.Item).all()
 
 
 @app.get('/item/{item_id}', response_model=Item, status_code=status.HTTP_200_OK)
 def get_item(item_id: int):
-    item = db.query(models.Item).filter(models.Item.id == item_id).first()
-
-    return item
+    return db.query(models.Item).filter(models.Item.id == item_id).first()
 
 
 @app.post('/items', response_model=Item, status_code=status.HTTP_201_CREATED)
