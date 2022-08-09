@@ -47,7 +47,7 @@ def get_item(item_id: int):
     return db.query(models.Item).filter(models.Item.id == item_id).first()
 
 
-@app.post('/items', response_model=Item, status_code=status.HTTP_201_CREATED)
+@app.post('/items/', response_model=Item, status_code=status.HTTP_201_CREATED)
 def create_an_item(item: Item):
     db_item = db.query(models.Item).filter(models.Item.item_name == item.item_name).first()
 
