@@ -5,7 +5,7 @@ from sqlalchemy import String, Boolean, Integer, Column
 # Create database model
 class Item(Base):
     __tablename__ = 'items'
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     username = Column(String, unique=True, nullable=False)
     item_name = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
