@@ -37,6 +37,7 @@ def setup_logging():
 
 
 if __name__ == '__main__':
+    print('__name__', __name__)
     server = Server(
         Config(
             "main:app",
@@ -45,6 +46,7 @@ if __name__ == '__main__':
         ),
     )
 
-setup_logging()
+    setup_logging()
 
-server.run()
+    server.run()
+
