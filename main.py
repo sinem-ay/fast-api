@@ -5,6 +5,7 @@ from database import SessionLocal
 import models
 import time
 from loguru import logger
+from datetime import datetime
 
 app = FastAPI()
 
@@ -20,76 +21,94 @@ async def add_process_time_header(request: Request, call_next):
 
 
 # Creating schema/model item class with pydantic
-class Item(BaseModel):
+class Games(BaseModel):
     id: int
-    username: str
-    item_name: str
+    game_name: str
+    game_type: str
     price: int
-    item_stock: bool
+    country: str
+    release_date: datetime
 
     class Config:
         orm_mode = True  # Sql objects to json
+
+class Ranking(BaseModel):
+    id: int
+    game_name: str
+    rank_site: str
+    rank: int
+
+    class Config:
+        orm_mode = True
+
+class PersonalRanking(BaseModel):
+    id: int
+    game_name: str
+    rank: int
+
+    class Config:
+        orm_mode = True
 
 
 db = SessionLocal()
 
 @logger.catch
-@app.get('/items', response_model=List[Item], status_code=status.HTTP_200_OK)
-def get_all_items():
+@app.get('/games', response_model=List[Games], status_code=status.HTTP_200_OK)
+def get_all_games():
     try:
-        return db.query(models.Item).all()
+        return db.query(models.Games).all()
     except ZeroDivisionError:
         logger.exception("Error")
 
 
-@app.get('/item/{item_id}', response_model=Item, status_code=status.HTTP_200_OK)
-def get_item(item_id: int):
-    return db.query(models.Item).filter(models.Item.id == item_id).first()
+@app.get('/game/{game_id}', response_model=Games, status_code=status.HTTP_200_OK)
+def get_game(game_id: int):
+    return db.query(models.Games).filter(models.Games.id == game_id).first()
 
 
-@app.post('/item/', response_model=Item, status_code=status.HTTP_201_CREATED)
-def create_an_item(item: Item):
-    db_item = db.query(models.Item).filter(models.Item.item_name == item.item_name).first()
+@app.post('/game/', response_model=Games, status_code=status.HTTP_201_CREATED)
+def create_game(game: Games):
+    db_game = db.query(models.Games).filter(models.Games.game_name == game.game_name).first()
 
-    if db_item is not None:
+    if db_game is not None:
         raise HTTPException(status_code=400, detail="Item already exists")
 
-    new_item = models.Item(
-        id=item.id,
-        username=item.username,
-        item_name=item.item_name,
-        price=item.price,
-        item_stock=item.item_stock
+    new_game = models.Games(
+        id=game.id,
+        game_name=game.game_name,
+        game_type=game.game_type,
+        price=game.price,
+        country=game.country
     )
 
-    db.add(new_item)
+    db.add(new_game)
     db.commit()
 
-    return new_item
+    return new_game
 
 
-@app.put('/item/{item_id}', response_model=Item, status_code=status.HTTP_200_OK)
-def update_item(item_id: int, item: Item):
-    item_update = db.query(models.Item).filter(models.Item.id == item_id).first()
+@app.put('/game/{game_id}', response_model=Games, status_code=status.HTTP_200_OK)
+def update_game(game_id: int, game: Games):
+    game_update = db.query(models.Games).filter(models.Games.id == game_id).first()
 
-    item_update.username = item.username
-    item_update.price = item.price
-    item_update.item_name = item.item_name
-    item_update.item_stock = item.item_stock
+    game_update.game_name = game.game_name
+    game_update.game_type = game.game_type
+    game_update.price = game.price
+    game_update.country = game.country
 
     db.commit()
 
-    return item_update
+    return game_update
 
 
-@app.delete('/item/{item_id}')
-def delete_item(item_id: int):
-    item_delete = db.query(models.Item).filter(models.Item.id == item_id).first()
+@app.delete('/game/{game_id}')
+def delete_game(game_id: int):
+    game_delete = db.query(models.Games).filter(models.Games.id == game_id).first()
 
-    if item_delete is None:
+    if game_delete is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Resource Not Found")
 
-    db.delete(item_delete)
+    db.delete(game_delete)
     db.commit()
 
-    return item_delete
+    return game_delete
