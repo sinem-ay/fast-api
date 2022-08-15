@@ -9,7 +9,8 @@ from datetime import datetime
 
 app = FastAPI()
 
-logger.add("file_1.log",backtrace=True, diagnose=True, rotation="500 MB")
+logger.add("file_1.log", backtrace=True, diagnose=True, rotation="500 MB")
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -27,10 +28,10 @@ class Games(BaseModel):
     game_type: str
     price: int
     country: str
-    release_date: datetime
 
     class Config:
         orm_mode = True  # Sql objects to json
+
 
 class Ranking(BaseModel):
     id: int
@@ -40,6 +41,7 @@ class Ranking(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class PersonalRanking(BaseModel):
     id: int
@@ -51,6 +53,7 @@ class PersonalRanking(BaseModel):
 
 
 db = SessionLocal()
+
 
 @logger.catch
 @app.get('/games', response_model=List[Games], status_code=status.HTTP_200_OK)
