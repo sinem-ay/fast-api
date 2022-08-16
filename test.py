@@ -4,27 +4,28 @@ from main import app
 client = TestClient(app)
 
 
-def test_get_inexistent_item():
-    response = client.get("/items/3")
+def test_get_inexistent_game():
+    response = client.get("/games/3")
     assert response.status_code == 404
 
 
-def test_create_item():
+def test_add_game():
     response = client.post(
-        "/item/",
-        json={"id": 3, "username": "host_1", "item_name": "headset", "price": 50, "item_stock": True})
+        "/game/",
+        json={"id": 3, "game_name": "host_1", "game_type": "headset", "price": 50, "company": "test", "country": True})
     assert response.status_code == 201
     assert response.json() == {
         "id": 3,
-        "username": "host_1",
-        "item_name": "headset",
+        "game_name": "host_1",
+        "game_type": "headset",
         "price": 50,
-        "item_stock": True
+        "company": "test",
+        "country": True
     }
 
 
 def test_get():
-    response = client.get("/items")
+    response = client.get("/games")
     assert response.status_code == 200
     assert response.json() == [
         {
@@ -51,6 +52,6 @@ def test_get():
     ]
 
 
-def test_delete_item():
-    response = client.delete("/item/3")
+def test_delete_game():
+    response = client.delete("/game/3")
     assert response.status_code == 200
