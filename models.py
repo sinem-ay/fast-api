@@ -9,6 +9,7 @@ class Games(Base):
     game_name = Column(String, unique=True, nullable=False)
     game_type = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
+    company = Column(Integer, nullable=False)
     country = Column(String, nullable=False)
     release_date = Column(DateTime, nullable=True)
 

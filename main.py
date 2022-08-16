@@ -27,6 +27,7 @@ class Games(BaseModel):
     game_name: str
     game_type: str
     price: int
+    company: str
     country: str
 
     class Config:
@@ -81,6 +82,7 @@ def create_game(game: Games):
         game_name=game.game_name,
         game_type=game.game_type,
         price=game.price,
+        company=game.company,
         country=game.country
     )
 
@@ -97,6 +99,7 @@ def update_game(game_id: int, game: Games):
     game_update.game_name = game.game_name
     game_update.game_type = game.game_type
     game_update.price = game.price
+    game_update.company = game.company
     game_update.country = game.country
 
     db.commit()
